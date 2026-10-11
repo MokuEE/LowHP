@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="本機即時偵測遊戲 HP 變化並播放警報">
+  <title>HP Watch — 即時血量警報</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="theme.css">
+</head>
+<body>
+  <main class="shell">
+    <section class="workspace">
+      <div class="preview-card">
+        <div class="card-head">
+          <div><span class="step">01</span><strong>畫面與偵測區域</strong></div>
+          <span id="captureBadge" class="badge">尚未擷取</span>
+        </div>
+        <div id="stage" class="stage">
+          <video id="sourceVideo" autoplay muted playsinline></video>
+          <canvas id="overlay"></canvas>
+          <div class="view-tools" aria-live="polite">
+            <span id="zoomValue">100%</span>
+            <button id="resetView" type="button" title="重設縮放與位置">重設視角</button>
+          </div>
+          <div id="emptyState" class="empty-state">
+            <div class="scan-icon"><i></i><i></i><i></i><i></i></div>
+            <strong>等待遊戲畫面</strong>
+            <span>開始後選擇遊戲視窗或整個螢幕</span>
+          </div>
+        </div>
+        <p class="hint"><b>左鍵拖曳</b>框選 HP 條・<b>滾輪</b>縮放・<b>按住中鍵</b>拖動畫面。請避開白字與 MP 條。</p>
+      </div>
+
+      <aside class="control-card">
+        <div class="card-head"><div><span class="step">02</span><strong>警報設定</strong></div></div>
+
+        <label class="field">
+          <span>低血量門檻 <output id="thresholdValue">40%</output></span>
+          <input id="threshold" type="range" min="5" max="95" value="40" step="5">
+        </label>
+
+        <label class="toggle-row">
+          <span><strong>受傷立即提醒</strong><small>偵測到血量下降時響一次</small></span>
+          <input id="damageAlert" type="checkbox" checked><i></i>
+        </label>
+
+        <label class="toggle-row">
+          <span><strong>低血量持續提醒</strong><small>低於門檻時定時重複</small></span>
+          <input id="lowAlert" type="checkbox" checked><i></i>
+        </label>
+
+        <label class="field compact">
+          <span>提醒間隔 <output id="intervalValue">3 秒</output></span>
+          <input id="interval" type="range" min="1" max="10" value="3">
+        </label>
+
+        <div class="volume-row">
+          <button id="testSound" class="ghost" type="button">播放測試音</button>
+          <label>音量 <input id="volume" type="range" min="0" max="1" value="0.75" step="0.05"></label>
+        </div>
+
+        <button id="captureButton" class="primary" type="button"><span>開始擷取畫面</span><b>→</b></button>
+        <button id="monitorButton" class="monitor" type="button" disabled>啟動即時監控</button>
+        <p id="saveNote" class="save-note">設定會自動儲存在這台裝置</p>
+      </aside>
+    </section>
+
+    <section class="status-panel">
+      <div class="status-main">
+        <span id="statusLamp" class="status-lamp"></span>
+        <div><small>目前狀態</small><strong id="statusText">等待設定</strong></div>
+      </div>
+      <div class="metric"><small>估算 HP</small><strong id="hpValue">--%</strong></div>
+      <div class="metric"><small>偵測延遲</small><strong id="latencyValue">-- ms</strong></div>
+      <div class="mini-bar"><i id="hpBar"></i></div>
+    </section>
+
+  </main>
+  <canvas id="analysisCanvas" hidden></canvas>
+  <script src="app.js"></script>
+</body>
+</html>
